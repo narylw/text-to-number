@@ -1,0 +1,24 @@
+<?php
+class WordToNumber{public $r0=array('صد'=>100,);public $z1=array('minus'=>true,'negative'=>true,);public $x2=array('صفر'=>0,'یک'=>1,'دو'=>2,'سه'=>3,'چهار'=>4,'پنج'=>5,'شش'=>6,'هفت'=>7,'هشت'=>8,'نه'=>9,'ده'=>10,'یازده'=>11,'دوازده'=>12,'سیزده'=>13,'چهارده'=>14,'پانزده'=>15,'شانزده'=>16,'هفد'=>17,'هجده'=>18,'نوزده'=>19,'بیست'=>20,'سی'=>30,'چهل'=>40,'پنجاه'=>50,'شصت'=>60,'هفتاد'=>70,'هشتاد'=>80,'نود'=>90,'دویست'=>200,'سیصد'=>300,'چهارصد'=>400,'پانصد'=>500,'ششصد'=>600,'هفتصد'=>700,'هشتصد'=>800,'نهصد'=>900,'و'=>0,);public $i3=array('هزار'=>1000,'میلیون'=>1000000,'میلیارد'=>1000000000,);public function __construct(){}public function parse($u4){$u4=$this->prepare($u4);$x5=preg_split('#\s+#',$u4,-1,PREG_SPLIT_NO_EMPTY);$x6=0;$n7=1;$i3=array(1=>0,);$w8=false;foreach($x5 as $k9){if(isset($this->$f10[$k9])){$w8=true;}elseif(isset($this->$a11[$k9])){$x6+=$this->$a11[$k9];}elseif(isset($this->$x12[$k9])){$x6*=$this->$x12[$k9];}elseif(isset($this->$q13[$k9])){if($x6==0){$x6=$i3[$n7];unset($i3[$n7]);$v14=$n7*$this->$q13[$k9];$i3[$v14]=$x6;$n7=$v14;$x6=0;}else{$i3[$this->$q13[$k9]]=$x6;$x6=0;$n7=$this->$q13[$k9];}}else{throw new LogicException('Unknown Token Found: '.$k9);}}if(!empty($x6)){$i3[1]=$x6;}$z15=0;foreach($i3 as $v14=>$b16){$z15+=$v14*$b16;}if($w8){$z15*=-1;}return $z15;}protected function prepare($u4){$u4=mb_convert_case($u4,MB_CASE_LOWER);return $u4;}}class Number2Word{protected $w17=array(0=>'صفر',1=>'یک',2=>'دو',3=>'سه',4=>'چهار',5=>'پنج',6=>'شش',7=>'هفت',8=>'هشت',9=>'نه',);protected $f18=array(1=>'یازده',2=>'دوازده',3=>'سیزده',4=>'چهارده',5=>'پانزده',6=>'شانزده',7=>'هفده',8=>'هجده',9=>'نوزده',);protected $b19=array(1=>'ده',2=>'بیست',3=>'سی',4=>'چهل',5=>'پنجاه',6=>'شصت',7=>'هفتاد',8=>'هشتاد',9=>'نود');protected $m20=array(1=>'صد',2=>'دویست',3=>'سیصد',4=>'چهارصد',5=>'پانصد',6=>'ششصد',7=>'هفتصد',8=>'هشتصد',9=>'نهصد',);protected $b21=array(1=>'هزار',2=>'میلیون',3=>'بیلیون',4=>'تریلیون',5=>'کادریلیون',6=>'کوینتریلیون',7=>'سکستریلیون',8=>'سپتریلیون',9=>'اکتریلیون',10=>'نونیلیون',11=>'دسیلیون',);protected $t22=array('and'=>'و',);function number_format($v23,$a24=0,$r25='.',$e26=','){$v23=explode('.',str_replace(' ','',$v23));$v23[0]=str_split(strrev($v23[0]),3);$i27=count($v23[0]);for($z28=0;$z28<$i27;$z28++){$v23[0][$z28]=strrev($v23[0][$z28]);}$v23[0]=implode($e26,array_reverse($v23[0]));if(!empty($v23[1])){$v23[1]=$this->Round($v23[1],$a24);}return implode($r25,$v23);}protected function groupToWords($v29){$q30=floor($v29/100);$w31=floor(($v29-$q30*100)/10);$x32=$v29-$q30*100-$w31*10;$p33=array();if($q30!=0){$p33[]=$this->$u34[$q30];}if($w31==1&&$x32!=0){$p33[]=$this->$u35[$x32];}else if($w31!=0&&$x32==0){$p33[]=$this->$t36[$w31];}else if($w31==0&&$x32==0){}else if($w31==0&&$x32!=0){$p33[]=$this->$c37[$x32];}else{$p33[]=$this->$t36[$w31];$p33[]=$this->$c37[$x32];}if(!count($p33)){return FALSE;}return $p33;}public function numberToWords($v23){$e38=$this->number_format($v23,0,'.',',');$z39=explode(',',$e38);$b21=count($z39);$x5=array();foreach($z39 as $k40=>$v29){$i41=self::groupToWords($v29);if($i41){$k9=implode(' '.$this->$l42['and'].' ',$i41);if(isset($this->$r43[$b21-$k40-1])){$k9.=' '.$this->$r43[$b21-$k40-1];}$x5[]=$k9;}}return implode(' '.$this->$l42['and'].' ',$x5);}}
+
+
+//     Example
+
+
+//     $parser = new WordToNumber();
+//     $number = new Number2Word;
+//     $array = array(
+//     'شش میلیارد و هفتصد و بیست میلیون و سیصد و چهل هزار و دویست و شش',
+//      500000000,
+//     );
+//     foreach ($array as $value)
+//     {
+//     if (gettype($value)=='string')
+//     {
+//     echo $parser->parse($value).' - '.$value."\n";
+//     }
+//     elseif (gettype($value)=='integer') {
+//         echo $number->numberToWords($value);
+//     }
+//     echo "<br>";
+//     }
